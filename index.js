@@ -1,7 +1,7 @@
 const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
@@ -66,7 +66,7 @@ async function run() {
       }
     });
 
-    // LogOut API
+    // Log Out API
     app.post("/api/logout", (req, res) => {
       try {
         const user = req.body;
