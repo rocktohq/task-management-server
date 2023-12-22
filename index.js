@@ -236,7 +236,7 @@ async function run() {
         });
 
         const data = [
-          ["Taks", "Count"],
+          ["Task", "Count"],
           ["To-Do", todos],
           ["On Going", ongoing],
           ["Completed", completed],
