@@ -214,6 +214,40 @@ async function run() {
       }
     });
 
+    // * Stats Related API
+    // Get User Task Stats
+    app.get("/api/stats", verifyToken, async (req, res) => {
+      try {
+        if (req.user.email !== req.query.email) {
+          return res.status(403).send("Forbidden access");
+        }
+
+        const todos = await tasksCollection.countDocuments({
+          "author.email": req?.query?.email,
+          status: "to-do",
+        });
+        const ongoing = await tasksCollection.countDocuments({
+          "author.email": req?.query?.email,
+          status: "ongoing",
+        });
+        const completed = await tasksCollection.countDocuments({
+          "author.email": req?.query?.email,
+          status: "completed",
+        });
+
+        const data = [
+          ["Taks", "Count"],
+          ["To-Do", todos],
+          ["On Going", ongoing],
+          ["Completed", completed],
+        ];
+
+        res.send(data);
+      } catch (error) {
+        res.send(error);
+      }
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
