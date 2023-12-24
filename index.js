@@ -137,17 +137,14 @@ async function run() {
           return res.status(403).send("Forbidden access");
         }
 
-        const page = parseInt(req.query.page);
-        const size = parseInt(req.query.size);
         const tasksCount = await tasksCollection.countDocuments({
           "author.email": req.query.email,
         });
 
-        const result = await tasksCollection
-          .find({ "author.email": req.query.email })
-          .skip(page * size)
-          .limit(size)
-          .toArray();
+        const result = await tasksCollection.find({
+          "author.email": req.query.email,
+        });
+        
         res.send({ tasks: result, tasksCount });
       } catch (err) {
         res.send(err);
@@ -182,6 +179,16 @@ async function run() {
           _id: new ObjectId(req.params.id),
           "author.email": req.query.email,
         };
+
+        // If Task is Already Completed
+        const taskStatus = await tasksCollection.findOne(query);
+        if (taskStatus.status === "completed") {
+          return res.send({
+            status: "error",
+            message: "Completed task can not be updated!",
+          });
+        }
+
         const updatedTask = {
           $set: {
             ...task,
@@ -247,11 +254,6 @@ async function run() {
         res.send(error);
       }
     });
-
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
   } finally {
   }
 }
