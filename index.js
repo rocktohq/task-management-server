@@ -141,10 +141,12 @@ async function run() {
           "author.email": req.query.email,
         });
 
-        const result = await tasksCollection.find({
-          "author.email": req.query.email,
-        });
-        
+        const result = await tasksCollection
+          .find({
+            "author.email": req.query.email,
+          })
+          .toArray();
+
         res.send({ tasks: result, tasksCount });
       } catch (err) {
         res.send(err);
